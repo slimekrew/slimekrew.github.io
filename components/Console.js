@@ -67,7 +67,8 @@ export default {
         v-if="!logs.length"
         class="text-slate-600">
 
-        waiting for input...
+        ~ $ UPLOAD YOUR DEVICE TXT FILE
+        
 
       </div>
 
