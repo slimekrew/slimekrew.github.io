@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>x/1999</title>
 <meta name="description" content="x/1999" />
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 <style>
   :root{
     --bg:#09090b;
@@ -35,6 +36,8 @@
   @keyframes fade{from{opacity:0}to{opacity:1}}
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   @keyframes imgIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+  @keyframes popIn{from{opacity:0;transform:scale(.96) translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
 
   .wrap{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:22px}
 
@@ -109,6 +112,80 @@
     animation:rise .7s .42s cubic-bezier(.2,.8,.2,1) both;
   }
 
+  /* announcement popup */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:rgba(9,9,11,.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    animation:fade .3s ease both;
+  }
+  .modal{
+    width:100%;
+    max-width:380px;
+    background:rgba(12,12,15,.92);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 20px 50px -20px rgba(0,0,0,.8);
+    animation:popIn .35s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .modal-head{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:12px;
+  }
+  .modal-head .icon{
+    flex:0 0 auto;
+    width:34px;height:34px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:10px;
+    background:#141418;
+    border:1px solid var(--border);
+    color:var(--fg);
+  }
+  .modal-head .title{
+    font-size:15px;font-weight:600;letter-spacing:-.01em;
+    color:var(--fg);
+    margin:0;
+    flex:1;
+    min-width:0;
+  }
+  .modal-close{
+    flex:0 0 auto;
+    width:28px;height:28px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:8px;
+    border:1px solid transparent;
+    background:transparent;
+    color:var(--dim);
+    cursor:pointer;
+    transition:color .2s ease,border-color .2s ease,background .2s ease;
+  }
+  .modal-close:hover{
+    color:var(--fg);
+    border-color:var(--border);
+    background:#141418;
+  }
+  .modal-content{
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0;
+    word-wrap:break-word;
+  }
+  .modal.skeleton .bar{
+    height:12px;border-radius:6px;
+    background:#1a1a20;
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  .modal.skeleton .bar + .bar{margin-top:10px;width:75%}
+
   @media (prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
   }
@@ -142,5 +219,51 @@
 
     <div class="footer">© x/1999</div>
   </main>
+
+  <!-- announcement popup -->
+  <div x-data="announcement()" x-init="load()" x-cloak>
+    <template x-if="ann">
+      <div class="modal-overlay" @click.self="dismiss()" @keydown.escape.window="dismiss()">
+        <div class="modal" role="dialog" aria-modal="true">
+          <div class="modal-head">
+            <div class="icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+            </div>
+            <p class="title" x-text="ann.title"></p>
+            <button class="modal-close" @click="dismiss()" aria-label="close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+          <p class="modal-content" x-text="ann.content"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <script>
+    function announcement(){
+      return {
+        ann:null,
+        async load(){
+          try{
+            const r = await fetch("https://raw.githubusercontent.com/slimekrew/slimekrew.github.io/refs/heads/main/ann.json", {cache:"no-store"});
+            if(!r.ok) throw new Error(r.status);
+            const j = await r.json();
+            if(j && j.data && (j.data.title || j.data.content)){
+              this.ann = {
+                title: j.data.title || "Announcement",
+                content: j.data.content || ""
+              };
+            }
+          }catch(e){
+            this.ann = null;
+          }
+        },
+        dismiss(){
+          this.ann = null;
+        }
+      };
+    }
+  </script>
 </body>
 </html>
