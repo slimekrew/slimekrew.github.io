@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>slimekrew</title>
+    <meta name="description" content="slimekrew profile page" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            boxShadow: {
+              soft: '0 18px 42px rgba(15, 23, 42, 0.08)',
+            },
+          },
+        },
+      };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/datastar@latest/dist/datastar.js"></script>
+
+    <style>
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top, rgba(148, 163, 184, 0.15), transparent 32%),
+          linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .label {
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        transition: all 160ms ease;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: #0f172a;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #111827;
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #0f172a;
+        border: 1px solid rgba(148, 163, 184, 0.32);
+      }
+
+      .btn-secondary:hover {
+        background: #f8fafc;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+    <main class="mx-auto flex min-h-screen max-w-5xl items-center justify-center px-4 py-10">
+      <section class="w-full max-w-xl">
+        <div class="card rounded-[30px] p-6 sm:p-8">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative">
+              <img
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
+                alt="Profile avatar"
+                class="h-28 w-28 rounded-full object-cover ring-4 ring-slate-100 shadow-soft sm:h-32 sm:w-32"
+              />
+              <span class="absolute -bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white bg-emerald-500"></span>
+            </div>
+
+            <div class="mt-6">
+              <p class="label text-[10px] text-slate-500">Profile</p>
+              <h1 class="mt-3 text-3xl font-bold tracking-[-0.06em] text-slate-900 sm:text-4xl">slimekrew</h1>
+            </div>
+
+            <div class="mt-4 text-center">
+              <p class="font-mono text-lg font-semibold tracking-[-0.04em] text-slate-700">x/1999</p>
+            </div>
+
+            <div class="mt-6">
+              <a
+                href="https://t.me/enjoyyoursorrow"
+                target="_blank"
+                rel="noreferrer"
+                class="btn btn-primary px-5 py-2.5 text-sm shadow-sm"
+              >
+                Telegram: @enjoyyoursorrow
+              </a>
+            </div>
+
+            <div class="mt-6">
+              <button
+                type="button"
+                data-on-click="@toggle('annDialogOpen')"
+                class="btn btn-secondary px-4 py-2.5 text-sm"
+              >
+                View details
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div
+      id="ann-dialog"
+      data-show="annDialogOpen"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/35 p-4"
+      data-on-keydown="if (event.key === 'Escape') { $set('annDialogOpen', false) }"
+      tabindex="-1"
+    >
+      <div
+        class="w-full max-w-md rounded-[28px] border border-slate-200 bg-white/85 p-5 shadow-soft backdrop-blur-md"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ann-dialog-title"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="label text-[10px] text-slate-500">Ann</p>
+            <h2 id="ann-dialog-title" class="mt-2 text-2xl font-bold tracking-[-0.04em] text-slate-900">Details</h2>
+          </div>
+
+          <button
+            type="button"
+            data-on-click="@toggle('annDialogOpen')"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-lg text-slate-600 transition hover:bg-slate-50"
+            aria-label="Close dialog"
+          >
+            ×
+          </button>
+        </div>
+
+        <div id="ann-content" class="mt-5 space-y-3 text-sm text-slate-700"></div>
+      </div>
+    </div>
+
+    <script>
+      const annContent = document.getElementById('ann-content');
+      const annDialog = document.getElementById('ann-dialog');
+
+      async function loadAnnData() {
+        try {
+          const response = await fetch('./ann.json', { cache: 'no-store' });
+          if (!response.ok) {
+            return;
+          }
+
+          const data = await response.json();
+          if (!data || Object.keys(data).length === 0) {
+            return;
+          }
+
+          const entries = Object.entries(data)
+            .map(([key, value]) => {
+              const label = String(key)
+                .replace(/[_-]+/g, ' ')
+                .replace(/\b\w/g, (char) => char.toUpperCase());
+
+              return `
+                <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+                  <div class="label text-[9px] text-slate-400">${label}</div>
+                  <div class="mt-2 text-base font-medium text-slate-800">${String(value)}</div>
+                </div>
+              `;
+            })
+            .join('');
+
+          annContent.innerHTML = entries;
+
+          if (window.datastar && typeof window.datastar.set === 'function') {
+            window.datastar.set('annDialogOpen', true);
+          } else {
+            annDialog.classList.remove('hidden');
+            annDialog.classList.add('flex');
+          }
+        } catch (err) {
+          console.warn('ann.json not available or invalid:', err);
+        }
+      }
+
+      loadAnnData();
+    </script>
+  </body>
+</html>
